@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-landing-page',
@@ -15,7 +15,11 @@ import { Subject } from 'rxjs';
 })
 export class LandingPageComponent implements OnInit, AfterViewInit {
   @ViewChild('necessidadeInput')
-  necessidadeInput!: ElementRef<HTMLInputElement>;
+  public necessidadeInput!: ElementRef<HTMLInputElement>;
+
+  public necessidade: string = '';
+
+  public AIResponse: string = '';
 
   public frases: string[] = [
     'Qual a necessidade do seu negócio?',
@@ -26,9 +30,13 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
 
   public fraseAtual = 0;
 
-  private isLoadingSubject = new Subject<boolean>();
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
 
   public isLoading$ = this.isLoadingSubject.asObservable();
+
+  private isAIDisabledSubject = new BehaviorSubject<boolean>(false);
+
+  public isAIDisabled$ = this.isAIDisabledSubject.asObservable();
 
   public formContact = this.fb.group({
     name: ['', Validators.required],
@@ -41,9 +49,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
 
   constructor(private fb: FormBuilder) {}
 
-  public ngOnInit(): void {
-
-  }
+  public ngOnInit(): void {}
 
   public ngAfterViewInit(): void {
     this.animarPlaceholder(this.frases[this.fraseAtual]);
@@ -82,6 +88,14 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
 
   public contact(): void {
     this.isLoadingSubject.next(true);
-    console.log(this.formContact.value)
+    console.log(this.formContact.value);
+  }
+
+  public callAI(): void {
+    if (this.necessidade.length > 10) {
+      console.log(this.necessidade);
+      this.AIResponse = 'Resposta da AI';
+      this.isAIDisabledSubject.next(true);
+    }
   }
 }

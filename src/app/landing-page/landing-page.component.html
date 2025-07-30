@@ -1,7 +1,7 @@
 <!-- Header -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-    <div class="offcanvas__logo">
+    <div class="offcanvas__logo mr-2">
       <a href="index.html">
         <img
           class="logo-size"
@@ -27,7 +27,7 @@
 
 <!-- Hero -->
 <section class="bg-orange-500 text-white py-24 text-center">
-  <div class="container mx-auto px-6">
+  <div class="container mx-auto px-6 mt-4">
     <h2 class="text-5xl font-bold mb-6">Análise Visual com IA</h2>
     <p class="text-xl mb-8 max-w-2xl mx-auto">
       Detecte, conte, analize e monitore seu público com precisão e Inteligência
@@ -37,6 +37,7 @@
 
     <div class="relative size-full">
       <form
+        (ngSubmit)="callAI()"
         class="group flex flex-col gap-2 p-3 w-full rounded-3.5xl border border-muted-border bg-muted text-base shadow-xl border-ai bg-white"
       >
         <div class="relative flex flex-1 items-center">
@@ -47,17 +48,22 @@
             style="min-height: 80px; height: 80px"
             placeholder="Qual a necessidade do seu negócio? "
             maxlength="50000"
+            [(ngModel)]="necessidade"
+            [ngModelOptions]="{ standalone: true }"
           ></textarea>
         </div>
         <div class="flex gap-1 flex-wrap items-center">
-          <div></div>
           <div class="ml-auto flex items-center gap-1">
             <div class="relative flex items-center gap-2">
               <button
                 id="chatinput-send-message-button"
                 type="submit"
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-600 transition-opacity duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50"
-                disabled=""
+                [disabled]="(isAIDisabled$ | async) || false"
+                [ngClass]="{
+                  'disabled-button':
+                    (isAIDisabled$ | async) || false || necessidade.length < 10
+                }"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +81,7 @@
             </div>
           </div>
         </div>
+        <p style="color: black">{{ AIResponse }}</p>
       </form>
     </div>
   </div>
